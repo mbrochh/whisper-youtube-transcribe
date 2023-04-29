@@ -6,6 +6,7 @@ import PyPDF2
 import requests
 
 from .source_youtube import slugify
+from .utils import get_filename
 
 
 def remove_non_printable_chars(text):
@@ -45,20 +46,19 @@ def download_pdf(url, title, output_path="files/pdf"):
     """
     response = requests.get(url)
     title_slug = slugify(title)
-    filename_without_filetype = title_slug
     pdf_path = os.path.join(output_path, f"{title_slug}.pdf")
     with open(pdf_path, "wb") as file:
         file.write(response.content)
-    return pdf_path, filename_without_filetype
+    return pdf_path
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         url = sys.argv[1]
         title = sys.argv[2]
-        file_path, filename_without_filetype = download_pdf(url, title)
+        file_path = download_pdf(url, title)
+        filename_without_filetype = get_filename(file_path)
         extract_text_from_pdf(file_path, filename_without_filetype)
         print(f"Downloaded pdf to {file_path}")
     else:
-        print('Usage: python -m gpt_summarize.source_pdf.py <url> "<title>"')
         print('Usage: python -m gpt_summarize.source_pdf.py <url> "<title>"')

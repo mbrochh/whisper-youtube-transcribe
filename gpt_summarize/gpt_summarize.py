@@ -4,7 +4,8 @@ from .do_summarize import save_summaries, split_text, summarize_in_parallel
 from .do_transcribe import save_transcript, transcribe
 from .source_pdf import download_pdf, extract_text_from_pdf
 from .source_website import download_website
-from .source_youtube import convert_to_mp3, download_audio
+from .source_youtube import convert_to_mp3, download_video
+from .utils import get_filename
 
 
 def call_openai(text_path, filename_without_filetype):
@@ -13,7 +14,7 @@ def call_openai(text_path, filename_without_filetype):
         f"Found {len(chunks)} chunks, totalling {total_token_count} tokens."
         " Calling OpenAI API now..."
     )
-    summaries, elapsed_time = summarize_in_parallel(chunks)
+    summaries = summarize_in_parallel(chunks)
     summary_path, total_tokens_used, total_cost = save_summaries(
         summaries, filename_without_filetype
     )
@@ -30,9 +31,11 @@ def process_youtube(url):
 
     """
     print(f"Downloading audio for {url}...")
-    movie_path, filename_without_filetype = download_audio(url)
+    movie_path = download_video(url)
 
     audio_path = convert_to_mp3(movie_path)
+
+    filename_without_filetype = get_filename(audio_path)
 
     print(f"Transcribing {audio_path} (this will take a while)...")
     transcript, elapsed_time = transcribe(audio_path)
@@ -49,7 +52,8 @@ def process_website(url):
 
     """
     print(f"Downloading website {url}...")
-    file_path, filename_without_filetype = download_website(url)
+    file_path, text = download_website(url)
+    filename_without_filetype = get_filename(file_path)
 
     call_openai(file_path, filename_without_filetype)
 
@@ -61,7 +65,8 @@ def process_pdf(url, title):
 
     """
     print(f"Downloading PDF from {url}...")
-    file_path, filename_without_filetype = download_pdf(url, title)
+    file_path = download_pdf(url, title)
+    filename_without_filetype = get_filename(file_path)
 
     print("Extracting text from PDF...")
     text_path = extract_text_from_pdf(file_path, filename_without_filetype)

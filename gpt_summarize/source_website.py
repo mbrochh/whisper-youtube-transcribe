@@ -21,7 +21,7 @@ def download_website(url, output_path="files/website/"):
     file_path = os.path.join(output_path, filename)
     with open(file_path, "w") as f:
         f.write(article.text)
-    return file_path, title_slug
+    return file_path, article.text
 
 
 if __name__ == "__main__":
@@ -30,5 +30,4 @@ if __name__ == "__main__":
         file_path, text = download_website(url)
         print(f"Downloaded website to {file_path} ({len(text)} characters)")
     else:
-        print("Usage: python -m gpt_summarize.source_website.py <url>")
         print("Usage: python -m gpt_summarize.source_website.py <url>")

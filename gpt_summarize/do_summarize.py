@@ -8,6 +8,7 @@ import spacy
 import tiktoken
 
 from .local_settings import OPENAI_API_KEY
+from .utils import get_filename
 
 PROMPT = """
 Create a bullet point summary of the following text. 
@@ -99,15 +100,12 @@ def summarize_in_parallel(chunks, num_threads=4):
     Calls OpenAI API to summarize each chunk of text.
 
     """
-    start_time = timeit.default_timer()
     summaries = []
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
         results = executor.map(summarize, chunks)
         for result in results:
             summaries.append(result)
-    end_time = timeit.default_timer()
-    elapsed_time = int(end_time - start_time)
-    return summaries, elapsed_time
+    return summaries
 
 
 def save_summaries(
@@ -136,19 +134,23 @@ if __name__ == "__main__":
         text_path = sys.argv[1]
         chunks, total_token_count = split_text(text_path)
         print(
-            f"Found {len(chunks)} chunks, totalling {total_token_count} tokens."
+            f"Found {len(chunks)} chunks,"
+            f" totalling ~{total_token_count} tokens."
         )
-        summaries, elapsed_time = summarize_in_parallel(chunks)
+
+        summaries = summarize_in_parallel(chunks)
+
+        filename_without_filetype = get_filename(text_path)
+        summary_path, total_tokens_used, total_cost = save_summaries(
+            summaries, filename_without_filetype
+        )
+
         print(
             f"Created {len(summaries)} summaries,"
-            f" totalling {total_token_count} tokens, in {elapsed_time} seconds."
-            f" Cost:"
-            f" ${total_token_count * COST_PER_1K_TOKENS_USD / 1000:.2f} USD."
+            f" totalling {total_tokens_used} tokens,"
+            f" at a cost of ${total_cost:.2f} USD."
+            f" Saved to {summary_path}."
         )
-        filename_without_filetype = os.path.splitext(
-            os.path.basename(text_path)
-        )[0]
-        save_summaries(summaries, filename_without_filetype)
     else:
         print(
             "Usage: python -m gpt_summarize.chatgpt_summarize.py"
