@@ -3,6 +3,9 @@
 This is a talk that I presented for the Python User Group Singapore & National
 Library Board in May 2023.
 
+[Here are some tweets](https://twitter.com/mbrochh/status/1652183096933117957) 
+with screenshots of this repo in action.
+
 ## Running the slides
 
 * Clone this repo & `cd` into it and then `cd` into the `slidev` folder
