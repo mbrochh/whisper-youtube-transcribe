@@ -1,6 +1,5 @@
 import os
 import sys
-import timeit
 from concurrent.futures import ThreadPoolExecutor
 
 import openai
@@ -108,9 +107,7 @@ def summarize_in_parallel(chunks, num_threads=4):
     return summaries
 
 
-def save_summaries(
-    summaries, filename_without_filetype, output_dir="files/summaries"
-):
+def save_summaries(summaries, filename_only, output_dir="files/summaries"):
     """
     Saves summaries to a text file, and returns the path to the file.
 
@@ -119,7 +116,7 @@ def save_summaries(
 
     """
     total_tokens_used = 0
-    summary_path = os.path.join(output_dir, f"{filename_without_filetype}.txt")
+    summary_path = os.path.join(output_dir, f"{filename_only}.txt")
     with open(summary_path, "w") as f:
         for summary in summaries:
             f.write(summary["choices"][0].text)
@@ -140,9 +137,9 @@ if __name__ == "__main__":
 
         summaries = summarize_in_parallel(chunks)
 
-        filename_without_filetype = get_filename(text_path)
+        filename_only = get_filename(text_path)
         summary_path, total_tokens_used, total_cost = save_summaries(
-            summaries, filename_without_filetype
+            summaries, filename_only
         )
 
         print(

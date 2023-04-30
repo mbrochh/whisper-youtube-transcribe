@@ -4,6 +4,8 @@ import timeit
 
 import whisper
 
+from .utils import get_filename
+
 
 def transcribe(audio_file, whisper_model="small.en"):
     """
@@ -19,9 +21,7 @@ def transcribe(audio_file, whisper_model="small.en"):
     return result, elapsed_time
 
 
-def save_transcript(
-    text, filename_without_filetype, output_path="files/transcripts"
-):
+def save_transcript(text, audio_path, output_path="files/transcripts"):
     """
     Saves the given text to a file with the given filename in the given
     output_path.
@@ -29,7 +29,8 @@ def save_transcript(
     Returns the path to the saved file.
 
     """
-    text_path = os.path.join(output_path, f"{filename_without_filetype}.txt")
+    filename_only = get_filename(audio_path)
+    text_path = os.path.join(output_path, f"{filename_only}.txt")
     with open(text_path, "w") as f:
         f.write(text)
     return text_path

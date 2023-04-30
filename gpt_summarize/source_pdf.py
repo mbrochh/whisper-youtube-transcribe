@@ -17,13 +17,13 @@ def remove_non_printable_chars(text):
     return "".join(c for c in text if unicodedata.category(c) != "Cc")
 
 
-def extract_text_from_pdf(
-    file_path, filename_without_filetype, output_path="files/pdf_text"
-):
+def extract_text_from_pdf(file_path, output_path="files/pdf_text"):
     """
     Extracts the text from the given PDF and saves it to the given output path.
 
     """
+    filename_only = get_filename(file_path)
+
     with open(file_path, "rb") as file:
         reader = PyPDF2.PdfReader(file)
         text = ""
@@ -32,7 +32,7 @@ def extract_text_from_pdf(
             cleaned_text = remove_non_printable_chars(dirty_text)
             text += cleaned_text
 
-    filename = f"{filename_without_filetype}.txt"
+    filename = f"{filename_only}.txt"
     txt_path = os.path.join(output_path, filename)
     with open(txt_path, "w") as f:
         f.write(text)
@@ -57,8 +57,7 @@ if __name__ == "__main__":
         url = sys.argv[1]
         title = sys.argv[2]
         file_path = download_pdf(url, title)
-        filename_without_filetype = get_filename(file_path)
-        extract_text_from_pdf(file_path, filename_without_filetype)
+        extract_text_from_pdf(file_path)
         print(f"Downloaded pdf to {file_path}")
     else:
         print('Usage: python -m gpt_summarize.source_pdf.py <url> "<title>"')

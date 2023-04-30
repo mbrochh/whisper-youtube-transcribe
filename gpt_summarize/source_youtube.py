@@ -1,3 +1,4 @@
+import datetime
 import os
 import sys
 
@@ -29,6 +30,8 @@ def download_video(url, output_path="files/audio/"):
         original_file_base, file_ext = os.path.splitext(original_filename)
 
         new_filename = slugify(original_filename)
+        date_str = datetime.datetime.now().strftime("%Y-%m-%d_")
+        new_filename = date_str + new_filename
 
         new_file_path = os.path.join(
             output_path, f"{new_filename}{file_ext.lower()}"

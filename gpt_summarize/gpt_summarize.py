@@ -8,7 +8,9 @@ from .source_youtube import convert_to_mp3, download_video
 from .utils import get_filename
 
 
-def call_openai(text_path, filename_without_filetype):
+def call_openai(text_path):
+    filename_only = get_filename(text_path)
+
     chunks, total_token_count = split_text(text_path)
     print(
         f"Found {len(chunks)} chunks, totalling {total_token_count} tokens."
@@ -16,7 +18,7 @@ def call_openai(text_path, filename_without_filetype):
     )
     summaries = summarize_in_parallel(chunks)
     summary_path, total_tokens_used, total_cost = save_summaries(
-        summaries, filename_without_filetype
+        summaries, filename_only
     )
     print(
         f"ALL DONE! Summary saved at {summary_path}."
@@ -35,14 +37,14 @@ def process_youtube(url):
 
     audio_path = convert_to_mp3(movie_path)
 
-    filename_without_filetype = get_filename(audio_path)
+    filename_only = get_filename(audio_path)
 
     print(f"Transcribing {audio_path} (this will take a while)...")
     transcript, elapsed_time = transcribe(audio_path)
-    text_path = save_transcript(transcript["text"], filename_without_filetype)
+    text_path = save_transcript(transcript["text"], filename_only)
     print(f"Audio has been transcribed in {int(elapsed_time)} seconds")
 
-    call_openai(text_path, filename_without_filetype)
+    call_openai(text_path)
 
 
 def process_website(url):
@@ -53,9 +55,7 @@ def process_website(url):
     """
     print(f"Downloading website {url}...")
     file_path, text = download_website(url)
-    filename_without_filetype = get_filename(file_path)
-
-    call_openai(file_path, filename_without_filetype)
+    call_openai(file_path)
 
 
 def process_pdf(url, title):
@@ -66,12 +66,11 @@ def process_pdf(url, title):
     """
     print(f"Downloading PDF from {url}...")
     file_path = download_pdf(url, title)
-    filename_without_filetype = get_filename(file_path)
 
     print("Extracting text from PDF...")
-    text_path = extract_text_from_pdf(file_path, filename_without_filetype)
+    text_path = extract_text_from_pdf(file_path)
 
-    call_openai(text_path, filename_without_filetype)
+    call_openai(text_path)
 
 
 if __name__ == "__main__":
