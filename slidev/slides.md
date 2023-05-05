@@ -332,7 +332,7 @@ transition: none
 
 ---
 layout: image
-image: /images/handson.jpg
+image: ./images/handson.jpg
 --- 
 
 <style>
