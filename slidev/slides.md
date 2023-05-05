@@ -1,16 +1,13 @@
 ---
 # try also 'default' to start simple
 theme: default
+title: Introduction to ChatGPT, Whisper & Github Copilot for Python Development
 background: images/cover.jpg
 # apply any windi css classes to the current slide
 class: 'text-center'
 highlighter: shiki
 # show line numbers in code blocks
 lineNumbers: true
-# some information about the slides, markdown enabled
-info: |
-  ## Introduction to ChatGPT, Whisper & Github Copilot for Python Development
-  By Martin Brochhaus
 drawings:
   persist: true
 # page transition
@@ -320,10 +317,32 @@ transition: none
 
 # How can I learn more?
 
+## Videos
+
 - [Neural Networks by 3Blue1Brown](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
 - [Transformers & NLP by Lucidate](https://www.youtube.com/watch?v=jo1NZ3vCS90&list=PLaJCKi8Nk1hwaMUYxJMiM3jTB2o58A6WY)
 - [Visual Guide to Transformer Neural Networks by Hedy AI](https://www.youtube.com/watch?v=mMa2PmYJlCo&list=PL86uXYUJ7999zE8u2-97i4KG_2Zpufkfb&index=2)
 - [Intuition Behind Self-Attention Mechanism in Transformer Networks by Ark](https://www.youtube.com/watch?v=g2BRIuln4uc&t=1398s)
+
+## Articles
+
+- [The Illustrated Transformer by Jay Almar](https://jalammar.github.io/illustrated-transformer/)
+- [Transformers from Scratch by Brandon Rohrer](https://e2eml.school/transformers.html)
+
+---
+layout: image
+image: /images/handson.jpg
+--- 
+
+<style>
+.text-black-shadow {
+  text-shadow: 0 0 3px rgba(0, 0, 0, 1);
+} 
+</style>
+
+<div class="flex justify-center items-center h-full">
+<div class="text-4xl text-black-shadow text-white">Let's get coding!</div>
+</div>
 
 ---
 
