@@ -1,4 +1,4 @@
-files/
 local_settings.py
+files/
 __pycache__/
 .DS_Store

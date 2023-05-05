@@ -1,48 +1,26 @@
 import os
 import sys
-import timeit
 
 import whisper
 
 
-def transcribe(audio_file, whisper_model="small.en"):
-    """
-    Transcribes the given audio file using the given model. Returns a tuple
-    containing the transcription result and the elapsed time in seconds.
+def transcribe(audio_path):
+    model = whisper.load_model("small.en")
+    result = model.transcribe(audio_path, verbose=True)
+    transcript = str(result["text"])
 
-    """
-    model = whisper.load_model(whisper_model)
-    start_time = timeit.default_timer()
-    result = model.transcribe(audio_file, verbose=True)
-    end_time = timeit.default_timer()
-    elapsed_time = int(end_time - start_time)
-    return result, elapsed_time
-
-
-def save_transcript(
-    text, filename_without_filetype, output_path="files/transcripts"
-):
-    """
-    Saves the given text to a file with the given filename in the given
-    output_path.
-
-    Returns the path to the saved file.
-
-    """
-    text_path = os.path.join(output_path, f"{filename_without_filetype}.txt")
+    filename = os.path.splitext(os.path.basename(audio_path))[0]
+    text_path = os.path.join("files/transcripts", f"{filename}.txt")
     with open(text_path, "w") as f:
-        f.write(text)
-    return text_path
+        f.write(transcript)
+
+    return text_path, transcript
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         audio_path = sys.argv[1]
-        result, elapsed_time = transcribe(audio_path)
-        save_transcript(result["text"], audio_path)
-        print(f"Audio has been transcribed in {elapsed_time} seconds")
+        text_path, transcript = transcribe(audio_path)
+        print(f"Transcript saved to: {text_path}.")
     else:
-        print(
-            "Usage: python -m whisper_transcribe.whisper_transcribe.py"
-            " <audio_path>"
-        )
+        print("Usage: python -m gpt_summarize.do_transcribe.py <audio_path>")

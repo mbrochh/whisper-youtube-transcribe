@@ -2,45 +2,40 @@ import os
 import sys
 
 import yt_dlp
-from moviepy.editor import AudioFileClip
-
-from .utils import slugify
 
 
-def download_video(url, output_path="files/audio/"):
+def download_video(url):
     """
-    Downloads a YouTube video and saves it to the given output
-    path. Returns the path to the downloaded file and the filename without the
-    file extension.
+    Downloads a YouTube video and saves it to files/audio.
+
+    Returns the path to the downloaded file.
 
     """
     output_filename_result = {}
 
-    def rename_file(info_dict, output_filename_result):
+    def get_filename(info_dict):
         """
-        Renames the downloaded file to a slugified version of the original.
+        Gets the filename of the downloaded file.
 
         """
         if info_dict["status"] != "finished":
             return None
 
-        original_file_path = info_dict["filename"]
-        original_path, original_filename = os.path.split(original_file_path)
-        original_file_base, file_ext = os.path.splitext(original_filename)
-
-        new_filename = slugify(original_filename)
-
-        new_file_path = os.path.join(
-            output_path, f"{new_filename}{file_ext.lower()}"
-        )
-
-        output_filename_result["file_path"] = new_file_path
-        os.rename(original_file_path, new_file_path)
+        filename = info_dict["filename"]
+        filename, ext = os.path.splitext(filename)
+        output_filename_result["file_path"] = filename + ".mp3"
 
     ydl_opts = {
         "format": "bestaudio/best",
-        "outtmpl": f"{output_path}/%(title)s.%(ext)s",
-        "progress_hooks": [lambda d: rename_file(d, output_filename_result)],
+        "outtmpl": "files/audio/%(title)s.%(ext)s",
+        "postprocessors": [
+            {
+                "key": "FFmpegExtractAudio",
+                "preferredcodec": "mp3",
+                "preferredquality": "192",
+            }
+        ],
+        "progress_hooks": [get_filename],
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -50,23 +45,12 @@ def download_video(url, output_path="files/audio/"):
     return output_file_path
 
 
-def convert_to_mp3(path, output_path="files/audio/"):
-    """
-    Converts a mp4 file to a mp3 file. Returns the path to the mp3 file.
-
-    """
-    dir_path, filename = os.path.split(path)
-    file_base, file_ext = os.path.splitext(filename)
-    mp3_path = path.replace(file_ext, ".mp3")
-    AudioFileClip(path).write_audiofile(mp3_path)
-    os.remove(path)
-    return mp3_path
-
-
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         url = sys.argv[1]
-        movie_path = download_video(url)
-        convert_to_mp3(movie_path)
+        audio_path = download_video(url)
+        print(f"Download complete: {audio_path}")
     else:
+        print("Usage: python -m gpt_summarize.source_youtube.py <youtube_url>")
+        print("Usage: python -m gpt_summarize.source_youtube.py <youtube_url>")
         print("Usage: python -m gpt_summarize.source_youtube.py <youtube_url>")

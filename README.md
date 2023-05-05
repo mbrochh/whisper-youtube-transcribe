@@ -24,6 +24,9 @@ with screenshots of this repo in action.
 * `pip install -r requirements.txt`
 * `brew install ffmpeg`
 * `python -m spacy download en_core_web_sm`
+* `cd` into the `gpt_summarize` folder and 
+  `cp local_settings.py.sample local_settings.py` and insert your
+  `OPENAI_API_KEY`
 
 Also, create the following folder structure inside this repo:
 
