@@ -1,43 +1,18 @@
-# Introduction to ChatGPT, Copilot & Whisper
+# Slides branch
 
-This is a talk that I presented for the Python User Group Singapore & National
-Library Board in May 2023.
-
-[Here are some tweets](https://twitter.com/mbrochh/status/1652183096933117957) 
-with screenshots of this repo in action.
+This branch contains the slides for the talk that I gave on 2023-05-05 at
+the library@harbourfront.
 
 ## Running the slides
 
-* Clone this repo & `cd` into it and then `cd` into the `slidev` folder
-* `npm install`
-* `npm run dev`
-* Browse to `http://localhost:3030/`
+* clone this repo & `cd` into it and then `cd` into the `slidev` folder
+* run `npm install`
+* run `npm run dev`
+* browse to `http://localhost:3030/`
 
-## Local Setup for MacOS
+## Building the slides
 
-* Clone this repo & `cd` into it
-* Make sure you have pyenv installed with the virtualenv plugin
-* Make sure you have homebrew installed
-* `pyenv virtualenv chatgpt-copilot-whisper`
-* `pyenv activate chatgpt-copilot-whisper`
-* `pip install pip --upgrade`
-* `pip install -r requirements.txt`
-* `brew install ffmpeg`
-* `python -m spacy download en_core_web_sm`
-* `cd` into the `gpt_summarize` folder and 
-  `cp local_settings.py.sample local_settings.py` and insert your
-  `OPENAI_API_KEY`
-
-Also, create the following folder structure inside this repo:
-
-```
-- files/
----- audio/
----- summaries/
----- transcripts/
-```
-
-If setup worked, you should be able to summarize a video like so:
-
-* `cd` into the git repo
-* `python -m gpt_summarize.gpt_summarize <some youtube URL>`
+* `cd` into the `slidev` folder
+* run `npm run build`
+* run `mv dist ..`
+* push this branch

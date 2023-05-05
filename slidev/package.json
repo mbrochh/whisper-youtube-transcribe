@@ -2,7 +2,7 @@
   "name": "slidev",
   "private": true,
   "scripts": {
-    "build": "slidev build",
+    "build": "slidev build --base /whisper-youtube-transcribe",
     "dev": "slidev --open",
     "export": "slidev export"
   },
