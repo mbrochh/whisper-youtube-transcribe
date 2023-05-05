@@ -35,6 +35,7 @@ css: unocss
 <div class="text-left relative">
     <div class="z-90 text-lg">Introduction to ChatGPT, Whisper & Github Copilot for Python Development</div>
     <div class="text-sm mt-0">by <a href="https://twitter.com/mbrochh" target="_blank">Martin Brochhaus</a></div>
+    <div class="text-sm mt-1">slides: <a href="https://bit.ly/pugs-whisper" target="_blank">https://bit.ly/pugs-whisper</a></div>
 </div>
 
 ---
@@ -1280,6 +1281,7 @@ python -m gpt_summarize.do_summarize "files/transcripts/Sundar Pichai： AI will
 
 - Join the Python User Group: [https://pugs.org.sg/membership](https://pugs.org.sg/membership)
 - Follow me on Twitter: [https://twitter.com/@mbrochh](https://twitter.com/mbrochh)
+- Find the slides at [https://bit.ly/pugs-whisper](https://bit.ly/pugs-whisper)
 
 ---
 layout: end
