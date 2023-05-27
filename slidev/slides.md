@@ -87,13 +87,13 @@ clicks: 3
 <v-clicks>
 
 - GPT stands for **G**enerative **P**re-trained **T**ransformer
-- It is a multimodal large language model
-    - this means it can also take images as input
-- It has a context window of 8192 and 32768 tokens 
+- It is a **multimodal** **L**arge **L**anguage **M**odel (LLM)
+    - multimodal means it can take several "modalities" as input other than just text (ie images and audio)
+- It has a **context window** of 8192 and 32768 tokens 
     - depending on how much you are willing to pay
 - It was released on March 14, 2023
 - Sam Altman said it has cost $100 million to train the model
-- There are rumors that it has 1 trillion parameters
+- There are rumors that it has 1 trillion **parameters**
 
 </v-clicks>
 
@@ -144,8 +144,8 @@ clicks: 3
 - For language models, `x` might be a word or sentence
 - As a first step, that text will get converted into numbers so that we can do math with it
 - The function will then spit out another number, which stands for another word that is most likely to come next
-- Our function might look something like this: `f(x) = ax + bx + cx + dx + ex + fx`
-- But: it doesn't stop at `f`, it has A LOT more unknown parameters
+- Our function might look something like this: `f(x) = ax + bx + cx + dx + ex + fx + gx`
+- But: it doesn't stop at `g`, it has A LOT more unknown parameters
 - GPT-3 had 175 billion parameters, GPT-4 is rumoured to have 1 trillion parameters
 
 </v-clicks>
@@ -249,6 +249,11 @@ transition: none
         <ul>
             <li>
                 --> <span class="text-red">astro</span>, <span class="text-blue">no</span>, my, logy, mist
+            </li>
+            <li>
+              You can play around with tokens on the <a href="https://platform.openai.com/tokenizer" target="_blank">
+                OpenAI Tokenizer Playground
+              </a>
             </li>
         </ul>
     </div>
@@ -487,12 +492,13 @@ transition: none
 
 # Creating a project
 
-```bash {4,5,6,7,8,9,10}
+```bash {4,5,6,7,8,9,10,11}
 mkdir -p ~/Projects/gpt_summarize/gpt_summarize
 cd ~/Projects/gpt_summarize
 
 # Now create a few files that we will need later:
 touch .gitignore
+touch requirements.txt
 touch gpt_summarize/__init__.py
 touch gpt_summarize/source_youtube.py
 touch gpt_summarize/do_transcribe.py
@@ -506,10 +512,11 @@ touch gpt_summarize/local_settings.py
 
 # Creating a project
 
-```bash {10,11,12,13}
+```bash {11-14}
 mkdir -p ~/Projects/gpt_summarize/gpt_summarize
 cd ~/Projects/gpt_summarize
 touch .gitignore
+touch requirements.txt
 touch gpt_summarize/__init__.py
 touch gpt_summarize/source_youtube.py
 touch gpt_summarize/do_transcribe.py
@@ -520,7 +527,6 @@ touch gpt_summarize/local_settings.py
 mkdir -p files/audio
 mkdir -p files/transcripts
 mkdir -p files/summaries
-`
 ```
 
 ---
@@ -536,12 +542,15 @@ mkdir -p files/summaries
 │   ├── audio
 │   ├── summaries
 │   └── transcripts
-└── gpt_summarize
-    ├── __init__.py
-    ├── do_summarize.py
-    ├── do_transcribe.py
-    ├── local_settings.py
-    └── source_youtube.py
+├── gpt_summarize
+│   ├── __init__.py
+│   ├── do_summarize.py
+│   ├── do_summarize.pytouch
+│   ├── do_transcribe.py
+│   ├── local_settings.py
+│   └── source_youtube.py
+└── requirements.txt
+
 
 5 directories, 6 files
 ```
@@ -597,6 +606,27 @@ OPENAI_API_KEY = 'YOUR KEY HERE'
 - You can get your API key [here](https://platform.openai.com/account/api-keys)
 - This is considered secret information, which is why we have this file in `.gitignore`
 - Never share this key with anyone or they can use your OpenAI credits
+- Consider storing this key in a password manager because you won't be able to see it again once it has been created
+
+---
+
+# The `requirements.txt` file
+
+- We will need a few Python libraries throughout these slides
+- To make things easier, we will just install them all at once
+- Put the following code into the `requirements.txt` file:
+
+```bash
+yt-dlp==2023.3.4
+openai-whisper==20230314
+setuptools-rust==1.5.2
+openai==0.27.4
+spacy==3.5.2
+tiktoken==0.3.1
+requests==2.28.2
+```
+
+- And then execute `pip install -r requirements.txt` in your terminal
 
 ---
 transition: none
@@ -671,6 +701,7 @@ if __name__ == "__main__":
 # Adding some dummy functions
 
 - Let's add a dummy function to `source_youtube.py`:
+- Let's see if Copilot can help us a bit...
 
 ```python {3,4}
 import sys, os
@@ -694,6 +725,8 @@ python -m gpt_summarize.source_youtube test`
 ```
 
 ---
+
+- Let's ask ChatGPT to help us with the `download_audio` function:
 
 <img src="/images/download_audio_question.png" class="rounded-xl shadow w-full mt-[10%]" />
 
@@ -731,6 +764,8 @@ def download_audio(url):
 ```
 
 ---
+
+- Let's ask ChatGPT how to get the filename...
 
 <img src="/images/retrieve_filename_question.png" class="rounded-xl shadow w-full mt-[10%]" />
 
@@ -841,6 +876,7 @@ if __name__ == "__main__":
 # The `__main__` block for `do_transcribe.py`
 
 - Let's add a dummy function to `do_transcribe.py`:
+- Let's see if Copilot can help us a bit...
 
 ```python {2-3}
 
@@ -890,6 +926,8 @@ python -m gpt_summarize.do_transcribe "files/audio/Sundar Pichai： AI will have
 ```
 
 ---
+
+- Tip: ChatGPT can be your Python mentor!
 
 <img src="/images/code_question.png" class="rounded-xl shadow w-full mt-[10%]" />
 
@@ -950,39 +988,12 @@ if __name__ == "__main__":
 - NOTE: As usual, this code will crash because we have not implemented the `get_sentences` and `get_chunks` and `summarize` functions yet
 
 ---
-
-# The `__main__` block for `do_summarize.py`
-
-- Let's add dummy functions to `do_summarize.py`:
-
-```python
-# imports here...
-
-def get_sentences(text_path):
-    return ["This is a sentence."]
-
-def get_chunks(sentences):
-    return ["This is a chunk."]
-
-def summarize(chunks, filename):
-    return 'files/summaries/test.txt'
-
-# __main__ block here...
-```
-
-- Run the code and see if it works:
-
-```bash
-python -m gpt_summarize.do_summarize files/transcripts/test.txt
-```
-
----
 layout: two-cols
 ---
 
 # Some constants
 
-<ul class="mr-1">
+<ul class="mr-2">
 <li>At the top of <code>do_summarize.py</code>, after the imports, add the following code:</li>
 <li>See <a href="https://platform.openai.com/docs/models" target="_blank">https://platform.openai.com/docs/models</a></li>
 <li>See <a href="https://openai.com/pricing" target="_blank">https://openai.com/pricing</a></li>
@@ -1005,13 +1016,42 @@ Use '- ' for bullet points:
 {chunk}
 """
 
-MODEL = "text-davinci-003"
-ENCODING = "cl100k_base"
-MODEL_MAX_TOKENS = 4096
-COST_PER_1K_TOKENS_USD = 0.02
-RESPONSE_TOKENS = 1000
+MODEL = "text-davinci-002"
+ENCODING = "cl99k_base"
+MODEL_MAX_TOKENS = 4095
+COST_PER_0K_TOKENS_USD = 0.02
+RESPONSE_TOKENS = 999
 
 # rest of the code...
+```
+
+---
+
+# The `__main__` block for `do_summarize.py`
+
+- Let's add dummy functions to `do_summarize.py`:
+- Let's see if Copilot can help us a bit...
+
+```python
+# imports here...
+# constants here...
+
+def get_sentences(text_path):
+    return ["This is a sentence."]
+
+def get_chunks(sentences):
+    return ["This is a chunk."]
+
+def summarize(chunks, filename):
+    return 'files/summaries/test.txt'
+
+# __main__ block here...
+```
+
+- Run the code and see if it works:
+
+```bash
+python -m gpt_summarize.do_summarize files/transcripts/test.txt
 ```
 
 ---
@@ -1037,7 +1077,7 @@ RESPONSE_TOKENS = 1000
 - See [https://platform.openai.com/docs/models/gpt-3-5](https://platform.openai.com/docs/models/gpt-3-5)
 - The `text-davinci-003` model has a maximum token length of 4,097
 - When we send a prompt to the API, we must make sure that the PROMPT + RESPONSE fits into the maximum token limit
-    - Example: If our prompt is 4,000 tokens, then ChatGPT can only respond with 97 tokens
+    - Example: If our prompt is 4,000 tokens, then our response can only be 97 tokens
 
 ---
 
