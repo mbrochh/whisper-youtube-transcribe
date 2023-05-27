@@ -1323,6 +1323,10 @@ python -m gpt_summarize.do_summarize "files/transcripts/Sundar Pichai： AI will
 - Follow me on Twitter: [https://twitter.com/@mbrochh](https://twitter.com/mbrochh)
 - Find the slides at [https://bit.ly/pugs-whisper](https://bit.ly/pugs-whisper)
 
+- Join the Python User Group on Telegram:
+
+<img src="/images/telegram-invite.jpeg" class="w-[200px] ml-[20px]" />
+
 ---
 layout: end
 ---
