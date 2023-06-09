@@ -5,14 +5,18 @@ the library@harbourfront.
 
 ## Running the slides
 
-* clone this repo & `cd` into it and then `cd` into the `slidev` folder
+* clone this repo 
+* `git checkout slides`
+* `cd slidev`
 * run `npm install`
 * run `npm run dev`
 * browse to `http://localhost:3030/`
 
 ## Building the slides
 
-* `cd` into the `slidev` folder
+* `git checkout slides`
+* `cd slidev`
 * run `npm run build`
-* run `mv dist ..`
-* push this branch
+* `rm -rf ../docs`
+* run `mv dist ../docs`
+* commit and push
