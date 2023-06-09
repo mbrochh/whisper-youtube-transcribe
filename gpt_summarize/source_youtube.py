@@ -74,6 +74,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         url = sys.argv[1]
         movie_path = download_video(url)
-        convert_to_mp3(movie_path)
+        mp3_path = convert_to_mp3(movie_path)
+        print("Audio downloaded to: ", mp3_path)
     else:
         print("Usage: python -m gpt_summarize.source_youtube.py <youtube_url>")

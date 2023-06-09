@@ -77,6 +77,30 @@ There are a few pytest tests in this repo. You can run them like so:
 
 * `pytest -vs --cov=. --cov-report term-missing --cov-report html`
 
+## Structure of this repo
+
+* `gpt_summarize.py` is your main entry point. Based on the command line
+  arguments that you pass, it will try to guess which module to run.
+* If you want to summarize a video, the logic is in `source_youtube.py`
+  * `source_youtube.py` makes use of `do_transcribe.py`. The other two
+    obviously don't need that.
+* If you want to summarize a PDF, the logic is in `source_pdf.py`
+* If you want to summarize a website, the logic is in `source_website.py`
+* All three `source_XXX.py` modules make use of `do_summarize.py`
+
+In theory, you can call each part of the pipeline individually like so:
+
+```bash
+# Download a video:
+python -m gpt_summarize.source_youtube <some youtube URL>
+
+# Then transcribe it:
+python -m gpt_summarize.do_transcribe <path to mp3>
+
+# Then summarize it:
+python -m gpt_summarize.do_summarize <path to transcript>
+```
+
 ## Running the slids
 
 * `git checkout slides`
