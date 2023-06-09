@@ -4,9 +4,10 @@ import sys
 
 import yt_dlp
 
+from .local_settings import FFMPEG_PATH
 from .utils import slugify
 
-os.environ["IMAGEIO_FFMPEG_EXE"] = "/opt/homebrew/bin/ffmpeg"
+os.environ["IMAGEIO_FFMPEG_EXE"] = FFMPEG_PATH
 
 
 def download_video(url, output_path="files/audio/"):

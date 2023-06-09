@@ -28,6 +28,9 @@ then the chunk gets too big and the API call to OpenAI fails.
 
 ## Local Setup for MacOS
 
+NOTE: This should work fine even on Windows, you probably just need to 
+figure out how to install `ffmpeg` over there.
+
 If you would like to use this tool on your own machine, you can do this:
 
 * Clone this repo & `cd` into it
@@ -39,14 +42,20 @@ If you would like to use this tool on your own machine, you can do this:
 * Install all dependencies: `pip install -r requirements.txt`
 * Install ffmpeg: `brew install ffmpeg`
 * Download spacy model: `python -m spacy download en_core_web_sm`
+* Create your `local_settings.py` file:
+  * `cd gpt_summarize`
+  * `cp local_settings.py.example local_settings.py`
+  * Edit the `local_settings.py` file and add your OpenAI API key and change
+    the FFMPEG_PATH if needed (try `which ffmpeg` in your terminal to find out 
+    where it is)
 
 Also, create the following folder structure inside this repo:
 
-```
-- files/
----- audio/
----- summaries/
----- transcripts/
+```bash
+├── files
+│   ├── audio
+│   ├── summaries
+│   └── transcripts
 ```
 
 You can do so via:

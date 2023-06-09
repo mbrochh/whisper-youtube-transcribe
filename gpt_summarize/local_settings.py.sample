@@ -1,0 +1,2 @@
+OPENAI_API_KEY = "see https://platform.openai.com/account/api-keys"
+FFMPEG_PATH = "/opt/homebrew/bin/ffmpeg"
