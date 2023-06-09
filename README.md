@@ -26,30 +26,6 @@ correctly, it stops adding punctuation. Without full stops, the `do_summarize`
 module cannot create proper chunks with spacy (based on full sentences), and
 then the chunk gets too big and the API call to OpenAI fails.
 
-## Running the slides
-
-If you would like to see the slides on your own machine, you can do this:
-
-* Clone this repo 
-* `git checkout slides`
-* `cd slidev`
-* `npm install`
-* `npm run dev`
-* Browse to `http://localhost:3030/`
-
-## Building the slides
-
-This is mainly a note to myself: The slides are hosted on Github Pages. 
-The process to host them is as follows:
-
-* `git checkout slides`
-* `cd slidev`
-* `npm run build`
-* `rm -rf ../docs`
-* `mv dist ../docs`
-* `cd ..`
-* commit and push
-
 ## Local Setup for MacOS
 
 If you would like to use this tool on your own machine, you can do this:
@@ -91,3 +67,8 @@ If setup worked, you should be able to summarize a video like so:
 There are a few pytest tests in this repo. You can run them like so:
 
 * `pytest -vs --cov=. --cov-report term-missing --cov-report html`
+
+## Running the slids
+
+* `git checkout slides`
+* Learn more about how to run and build the slides in the README.md in the slides branch
