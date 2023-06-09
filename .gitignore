@@ -2,3 +2,8 @@ files/
 local_settings.py
 __pycache__/
 .DS_Store
+.hypothesis
+.coverage
+.pytest_cache
+.vscode
+htmlcov

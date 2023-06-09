@@ -1,6 +1,5 @@
 import os
 import sys
-from concurrent.futures import ThreadPoolExecutor
 
 import openai
 import spacy
@@ -56,6 +55,7 @@ def split_text(text_path):
     for sent in doc.sents:
         sent_text = sent.text.strip()  # this is one sentence
         sent_tokens = count_tokens(sent_text)
+        print(sent_tokens, sent_text)
 
         if (
             sum([count_tokens(chunk) for chunk in current_chunk]) + sent_tokens
@@ -100,10 +100,15 @@ def summarize_in_parallel(chunks, num_threads=4):
 
     """
     summaries = []
-    with ThreadPoolExecutor(max_workers=num_threads) as executor:
-        results = executor.map(summarize, chunks)
-        for result in results:
-            summaries.append(result)
+    for chunk in chunks:
+        result = summarize(chunk)
+        summaries.append(result)
+
+    # OpenAI now rate limits when using multiple threads...
+    # with ThreadPoolExecutor(max_workers=num_threads) as executor:
+    #     results = executor.map(summarize, chunks)
+    #     for result in results:
+    #         summaries.append(result)
     return summaries
 
 

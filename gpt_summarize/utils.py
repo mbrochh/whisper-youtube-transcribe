@@ -4,7 +4,7 @@ import re
 
 def slugify(value):
     """
-    Normalizes string, converts to lowercase, removes non-alpha characters,
+    Normalizes a string: converts to lowercase, removes non-alpha characters,
     and converts dashes and spaces to underscores.
 
     """

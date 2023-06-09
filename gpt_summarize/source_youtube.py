@@ -3,9 +3,10 @@ import os
 import sys
 
 import yt_dlp
-from moviepy.editor import AudioFileClip
 
 from .utils import slugify
+
+os.environ["IMAGEIO_FFMPEG_EXE"] = "/opt/homebrew/bin/ffmpeg"
 
 
 def download_video(url, output_path="files/audio/"):
@@ -58,6 +59,8 @@ def convert_to_mp3(path, output_path="files/audio/"):
     Converts a mp4 file to a mp3 file. Returns the path to the mp3 file.
 
     """
+    from moviepy.editor import AudioFileClip
+
     dir_path, filename = os.path.split(path)
     file_base, file_ext = os.path.splitext(filename)
     mp3_path = path.replace(file_ext, ".mp3")
