@@ -58,7 +58,8 @@ Now prepare this repo:
   * `cp local_settings.py.example local_settings.py`
   * Edit the `local_settings.py` file and add your OpenAI API key and change
     the FFMPEG_PATH if needed (try `which ffmpeg` in your terminal to find out 
-    where it is)
+    where it is) and change REPO_PATH (this repo) and WHISPER_REPO_PATH (
+      the whisper.cpp repo)
 
 Also, create the following folder structure inside this repo:
 

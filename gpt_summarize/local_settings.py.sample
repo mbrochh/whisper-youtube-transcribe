@@ -1,2 +1,4 @@
 OPENAI_API_KEY = "see https://platform.openai.com/account/api-keys"
 FFMPEG_PATH = "/opt/homebrew/bin/ffmpeg"
+REPO_PATH = "/Users/USERNAME/Projects/chatgpt-copilot-whisper"
+WHISPER_REPO_PATH = "/Users/USERNAME/Repos/whisper.cpp"
