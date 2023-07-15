@@ -4,8 +4,8 @@ import sys
 
 import yt_dlp
 
-from .local_settings import FFMPEG_PATH
-from .utils import slugify
+from .local_settings import FFMPEG_PATH, REPO_PATH
+from .utils import get_filename, slugify
 
 os.environ["IMAGEIO_FFMPEG_EXE"] = FFMPEG_PATH
 
@@ -55,26 +55,27 @@ def download_video(url, output_path="files/audio/"):
     return output_file_path
 
 
-def convert_to_mp3(path, output_path="files/audio/"):
+def convert_to_wav(path, output_path="files/audio/"):
     """
-    Converts a mp4 file to a mp3 file. Returns the path to the mp3 file.
+    Converts a mp4 file to a wav file. Returns the path to the mp3 file.
 
     """
-    from moviepy.editor import AudioFileClip
-
-    dir_path, filename = os.path.split(path)
-    file_base, file_ext = os.path.splitext(filename)
-    mp3_path = path.replace(file_ext, ".mp3")
-    AudioFileClip(path).write_audiofile(mp3_path)
-    os.remove(path)
-    return mp3_path
+    filename = get_filename(path)
+    audio_path = os.path.join(REPO_PATH, path)
+    wav_path = os.path.join(REPO_PATH, output_path, f"{filename}.wav")
+    cmd = (
+        f'ffmpeg -i "{audio_path}" -ar 16000 -ac 1 -c:a pcm_s16le "{wav_path}"'
+    )
+    print("Converting to wav with command: ", cmd)
+    os.remove(audio_path)
+    return wav_path
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         url = sys.argv[1]
         movie_path = download_video(url)
-        mp3_path = convert_to_mp3(movie_path)
-        print("Audio downloaded to: ", mp3_path)
+        wav_path = convert_to_wav(movie_path)
+        print("Audio downloaded to: ", wav_path)
     else:
         print("Usage: python -m gpt_summarize.source_youtube.py <youtube_url>")

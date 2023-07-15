@@ -1,10 +1,10 @@
 import sys
 
 from .do_summarize import save_summaries, split_text, summarize_in_parallel
-from .do_transcribe import save_transcript, transcribe
+from .do_transcribe import transcribe
 from .source_pdf import download_pdf, extract_text_from_pdf
 from .source_website import download_website
-from .source_youtube import convert_to_mp3, download_video
+from .source_youtube import convert_to_wav, download_video
 from .utils import get_filename
 
 
@@ -35,16 +35,12 @@ def process_youtube(url):
     print(f"Downloading audio for {url}...")
     movie_path = download_video(url)
 
-    audio_path = convert_to_mp3(movie_path)
-
-    filename_only = get_filename(audio_path)
-
+    audio_path = convert_to_wav(movie_path)
     print(f"Transcribing {audio_path} (this will take a while)...")
-    transcript, elapsed_time = transcribe(audio_path)
-    text_path = save_transcript(transcript["text"], filename_only)
+    elapsed_time, transcript_path = transcribe(audio_path)
     print(f"Audio has been transcribed in {int(elapsed_time)} seconds")
 
-    call_openai(text_path)
+    call_openai(transcript_path)
 
 
 def process_website(url):

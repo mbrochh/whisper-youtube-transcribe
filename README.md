@@ -28,10 +28,21 @@ then the chunk gets too big and the API call to OpenAI fails.
 
 ## Local Setup for MacOS
 
-NOTE: This should work fine even on Windows, you probably just need to 
-figure out how to install `ffmpeg` over there.
-
 If you would like to use this tool on your own machine, you can do this:
+
+NOTE: This should work fine even on Windows, you probably just need to 
+figure out how to install `ffmpeg` over there. I'm not sure if `whisper.cpp`
+works on windows.
+
+First, setup the faster whisper.cpp:
+
+* `mkdir ~/Repos && cd ~/Repos`
+* `git clone https://github.com/ggerganov/whisper.cpp.git`
+* `cd whisper.cpp`
+* `bash ./models/download-ggml-model.sh base.en`
+* `make`
+
+Now prepare this repo:
 
 * Clone this repo & `cd` into it
 * Make sure you have `pyenv` installed with the `virtualenv` plugin
