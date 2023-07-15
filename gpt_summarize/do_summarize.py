@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 import openai
 import spacy
@@ -16,11 +17,12 @@ Use '- ' for bullet points:
 {chunk}
 """
 
-MODEL = "text-davinci-003"
+MODEL = "gpt-3.5-turbo-16k"
 ENCODING = "cl100k_base"
-MODEL_MAX_TOKENS = 4096
-COST_PER_1K_TOKENS_USD = 0.02
-RESPONSE_TOKENS = 1000
+MODEL_MAX_TOKENS = 16384
+COST_PER_1K_INPUT_TOKENS_USD = 0.003
+COST_PER_1K_OUTPUT_TOKENS_USD = 0.004
+RESPONSE_TOKENS = 4000
 
 
 def count_tokens(text):
@@ -55,7 +57,6 @@ def split_text(text_path):
     for sent in doc.sents:
         sent_text = sent.text.strip()  # this is one sentence
         sent_tokens = count_tokens(sent_text)
-        print(sent_tokens, sent_text)
 
         if (
             sum([count_tokens(chunk) for chunk in current_chunk]) + sent_tokens
@@ -83,14 +84,17 @@ def summarize(chunk):
     openai.api_key = OPENAI_API_KEY
     prompt = PROMPT.format(chunk=chunk)
     prompt_tokens = count_tokens(prompt)
-    result = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
+    print("Sending prompt to OpenAI API...")
+    result = openai.ChatCompletion.create(
+        model=MODEL,
+        messages=[{"role": "user", "content": prompt}],
         max_tokens=MODEL_MAX_TOKENS - prompt_tokens - 10,
         temperature=0,
         n=1,
         stream=False,
     )
+    # print("Received response from OpenAI API, sleeping 1 minute.")
+    # time.sleep(65)
     return result
 
 
@@ -120,14 +124,23 @@ def save_summaries(summaries, filename_only, output_dir="files/summaries"):
     API calls.
 
     """
-    total_tokens_used = 0
+    total_input_tokens_used = 0
+    total_output_tokens_used = 0
     summary_path = os.path.join(output_dir, f"{filename_only}.txt")
     with open(summary_path, "w") as f:
         for summary in summaries:
-            f.write(summary["choices"][0].text)
+            f.write(summary["choices"][0]["message"]["content"])
             f.write("\n\n")
-            total_tokens_used += summary["usage"]["total_tokens"]
-    total_cost = total_tokens_used * COST_PER_1K_TOKENS_USD / 1000
+            total_input_tokens_used += summary["usage"]["prompt_tokens"]
+            total_output_tokens_used += summary["usage"]["completion_tokens"]
+    total_input_cost = (
+        total_input_tokens_used * COST_PER_1K_INPUT_TOKENS_USD / 1000
+    )
+    total_output_cost = (
+        total_output_tokens_used * COST_PER_1K_OUTPUT_TOKENS_USD / 1000
+    )
+    total_tokens_used = total_input_tokens_used + total_output_tokens_used
+    total_cost = total_input_cost + total_output_cost
     return summary_path, total_tokens_used, total_cost
 
 
