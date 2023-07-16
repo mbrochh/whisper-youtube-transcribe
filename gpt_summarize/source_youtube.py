@@ -1,5 +1,6 @@
 import datetime
 import os
+import subprocess
 import sys
 
 import yt_dlp
@@ -55,18 +56,21 @@ def download_video(url, output_path="files/audio/"):
     return output_file_path
 
 
-def convert_to_wav(path, output_path="files/audio/"):
+def convert_to_wav(movie_path, output_path="files/audio/"):
     """
     Converts a mp4 file to a wav file. Returns the path to the mp3 file.
 
     """
-    filename = get_filename(path)
-    audio_path = os.path.join(REPO_PATH, path)
+    filename = get_filename(movie_path)
+    audio_path = os.path.join(REPO_PATH, movie_path)
     wav_path = os.path.join(REPO_PATH, output_path, f"{filename}.wav")
     cmd = (
-        f'ffmpeg -i "{audio_path}" -ar 16000 -ac 1 -c:a pcm_s16le "{wav_path}"'
+        f'ffmpeg -y -i "{audio_path}" -ar 16000 -ac 1'
+        f' -c:a pcm_s16le "{wav_path}"'
     )
     print("Converting to wav with command: ", cmd)
+    return_code = subprocess.call(cmd, shell=True)
+    print("ffmpeg return code: ", return_code)
     os.remove(audio_path)
     return wav_path
 
