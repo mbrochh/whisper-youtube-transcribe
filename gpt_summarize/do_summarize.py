@@ -11,9 +11,10 @@ from .utils import get_filename
 
 PROMPT = """
 Create a bullet point summary of the following text. 
-Make sure that all major talking points are part of the summary. 
+Do not just list the general topic, but the actual facts that were shared.
 Use '- ' for bullet points:
 
+TEXT:
 {chunk}
 """
 
