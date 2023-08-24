@@ -617,7 +617,7 @@ OPENAI_API_KEY = 'YOUR KEY HERE'
 - Put the following code into the `requirements.txt` file:
 
 ```bash
-yt-dlp==2023.3.4
+yt-dlp
 openai-whisper==20230314
 setuptools-rust==1.5.2
 openai==0.27.4
