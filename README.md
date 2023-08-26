@@ -7,7 +7,18 @@ You can find the slides [here](https://mbrochh.github.io/whisper-youtube-transcr
 
 You can find a video of the talk [here](https://www.youtube.com/watch?v=t5eVAtavoQ8)
 
-## Usage
+## Usage with Docker
+
+I don't recommend using this with Docker because it is much slower than using
+it on a MacBook. But if you want to try it out, you can do this:
+
+* close this repo and `cd` into the cloned folder
+* `docker-compose build``
+* `docker-compose run -rm python YOUTUBE_URL_HERE`
+
+The output should appear in the `files/summaries` folder eventually.
+
+## Usage on local machine
 
 * First, follow the steps in the [Local Setup for MacOS](#local-setup-for-macos) section
 * If you want to summarize a Youtube video, run this command:
@@ -21,7 +32,7 @@ Note: PDF and Website is not very well tested and there are tons of edge cases
 that will make these commands crash.
 
 Youtube videos work very well. The only thing that I found is that sometimes,
-for very long videos, Whisper spams out and while it does transcribe everything
+for very long videos, Whisper spasms out and while it does transcribe everything
 correctly, it stops adding punctuation. Without full stops, the `do_summarize`
 module cannot create proper chunks with spacy (based on full sentences), and
 then the chunk gets too big and the API call to OpenAI fails.
