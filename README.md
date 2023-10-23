@@ -14,7 +14,7 @@ it on a MacBook. But if you want to try it out, you can do this:
 
 * close this repo and `cd` into the cloned folder
 * `docker-compose build``
-* `docker-compose run -rm python YOUTUBE_URL_HERE`
+* `docker-compose run -rm python --source youtube --url YOUTUBE_URL --title "VIDEO_TITLE" --authors "VIDEO_AUTHORS"`
 
 The output should appear in the `files/summaries` folder eventually.
 
@@ -22,11 +22,11 @@ The output should appear in the `files/summaries` folder eventually.
 
 * First, follow the steps in the [Local Setup for MacOS](#local-setup-for-macos) section
 * If you want to summarize a Youtube video, run this command:
-  * `python -m gpt_summarize.gpt_summarize <some youtube URL>`
+  * `python -m gpt_summarize.gpt_summarize --source youtube --url YOUTUBE_URL --title "VIDEO_TITLE" --authors "VIDEO_AUTHORS"`
 * If you want to summarize a PDF, run this command:
-  * `python -m gpt_summarize.gpt_summarize <some PDF file> "<some title>"` 
+  * `python -m gpt_summarize.gpt_summarize --source pdf --url PDF_URL --title "PDF_TITLE" --authors "PDF_AUTHORS"` 
 * If you want to summarize a website, run this command:
-  * `python -m gpt_summarize.gpt_summarize <some website URL>`
+  * `python -m gpt_summarize.gpt_summarize --source website --url WEBSITE_URL --title "WEBSITE_TITLE" --authors "WEBSITE_AUTHORS"`
 
 Note: PDF and Website is not very well tested and there are tons of edge cases
 that will make these commands crash.
@@ -77,7 +77,10 @@ Also, create the following folder structure inside this repo:
 ```bash
 ├── files
 │   ├── audio
+│   ├── book
+│   ├── logseq
 │   ├── summaries
+│   ├── website
 │   └── transcripts
 ```
 
@@ -85,14 +88,17 @@ You can do so via:
 
 ```bash
 mkdir -p files/audio
+mkdir -p files/book
+mkdir -p files/logseq
 mkdir -p files/summaries
 mkdir -p files/transcripts
+mkdir -p files/website
 ```
 
 If setup worked, you should be able to summarize a video like so:
 
 * `cd` into the git repo
-* `python -m gpt_summarize.gpt_summarize <some youtube URL>`
+* `python -m gpt_summarize.gpt_summarize --source youtube --url YOUTUBE_URL --title "SOME_TITLE" --authors "SOME AUTHORS"`
 
 ## Running the tests
 
@@ -103,7 +109,7 @@ There are a few pytest tests in this repo. You can run them like so:
 ## Structure of this repo
 
 * `gpt_summarize.py` is your main entry point. Based on the command line
-  arguments that you pass, it will try to guess which module to run.
+  arguments that you pass, it will decide which module to run.
 * If you want to summarize a video, the logic is in `source_youtube.py`
   * `source_youtube.py` makes use of `do_transcribe.py`. The other two
     obviously don't need that.

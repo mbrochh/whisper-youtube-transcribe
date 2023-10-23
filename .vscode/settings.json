@@ -1,12 +1,13 @@
 {
     "editor.rulers": [80],
     "python.formatting.blackArgs": ["--line-length", "79"],
-    "python.formatting.provider": "black",
+    "python.formatting.provider": "none",
     "python.analysis.typeCheckingMode": "basic",
     "[python]": {
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.organizeImports": true
-        }
+        },
+        "editor.defaultFormatter": "ms-python.black-formatter"
     }
 }
