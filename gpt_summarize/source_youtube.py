@@ -18,42 +18,26 @@ def download_video(url, output_path="files/audio/"):
     file extension.
 
     """
-    output_filename_result = {}
-
-    def rename_file(info_dict, output_filename_result):
-        """
-        Renames the downloaded file to a slugified version of the original.
-
-        """
-        if info_dict["status"] != "finished":
-            return None
-
-        original_file_path = info_dict["filename"]
-        original_path, original_filename = os.path.split(original_file_path)
-        original_file_base, file_ext = os.path.splitext(original_filename)
-
-        new_filename = slugify(original_filename)
-        date_str = datetime.datetime.now().strftime("%Y-%m-%d_")
-        new_filename = date_str + new_filename
-
-        new_file_path = os.path.join(
-            output_path, f"{new_filename}{file_ext.lower()}"
-        )
-
-        output_filename_result["file_path"] = new_file_path
-        os.rename(original_file_path, new_file_path)
+    date_str = datetime.datetime.now().strftime("%Y-%m-%d_")
+    outtmpl = os.path.join(output_path, date_str + '%(title)s.%(ext)s')
 
     ydl_opts = {
         "format": "bestaudio/best",
-        "outtmpl": f"{output_path}/%(title)s.%(ext)s",
-        "progress_hooks": [lambda d: rename_file(d, output_filename_result)],
+        "outtmpl": outtmpl,
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-
-    output_file_path = output_filename_result["file_path"]
-    return output_file_path
+        info_dict = ydl.extract_info(url, download=True)
+        output_file_path = ydl.prepare_filename(info_dict)
+    
+    original_path, original_filename = os.path.split(output_file_path)
+    original_file_base, file_ext = os.path.splitext(original_filename)
+    slugified_base = slugify(original_filename)
+    new_file_path = os.path.join(
+        output_path, f"{slugified_base}{file_ext.lower()}"
+    )
+    os.rename(output_file_path, new_file_path)
+    return new_file_path
 
 
 def convert_to_wav(movie_path, output_path="files/audio/"):

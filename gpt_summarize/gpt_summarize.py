@@ -10,7 +10,12 @@ from .utils import get_filename
 
 
 def create_logseq_note(
-    summary_path=None, source=None, title=None, authors=None
+    summary_path=None, 
+    source=None, 
+    title=None, 
+    authors=None, 
+    total_tokens_used=None, 
+    total_cost=None
 ):
     """
     Takes the bullet point summary and formats it so that it becomes a logseq
@@ -32,6 +37,8 @@ def create_logseq_note(
     with open(logseq_note_path, "w") as f:
         f.write(f"source:: {source}\n")
         f.write(f"authors:: {authors}\n")
+        f.write(f"gpt_token_count:: {total_tokens_used}\n")
+        f.write(f"summary_cost:: {total_cost}\n")
         f.write(f"- summarized [[{title}]]")
         f.write("\n- [[summary]]\n")
         f.writelines(formatted_lines)
@@ -42,7 +49,7 @@ def create_logseq_note(
 def call_openai(text_path=None, source=None, title=None, authors=None):
     filename_only = get_filename(text_path)
 
-    chunks, total_token_count = split_text(text_path)
+    chunks, total_token_count = split_text(text_path=text_path, title=title)
     print(
         f"Found {len(chunks)} chunks, totalling {total_token_count} tokens."
         " Calling OpenAI API now..."
@@ -55,7 +62,7 @@ def call_openai(text_path=None, source=None, title=None, authors=None):
         f"Summary saved at {summary_path}."
         f" Total tokens used: {total_tokens_used}. Cost: {total_cost} USD."
     )
-    return summary_path
+    return summary_path, total_tokens_used, total_cost
 
 
 def process_youtube(url=None, title=None, authors=None):
@@ -73,16 +80,21 @@ def process_youtube(url=None, title=None, authors=None):
 
     print(f"Downloading audio for {url}...")
     movie_path = download_video(url)
-
+    print(f'Audio downloaded to: "{movie_path}"')
     audio_path = convert_to_wav(movie_path)
     print(f"Transcribing {audio_path} (this will take a while)...")
     elapsed_time, transcript_path = transcribe(audio_path)
     print(f"Audio has been transcribed in {int(elapsed_time)} seconds")
-    summary_path = call_openai(
+    summary_path, total_tokens_used, total_cost = call_openai(
         text_path=transcript_path, source=url, title=title, authors=authors
     )
     create_logseq_note(
-        summary_path=summary_path, source=url, title=title, authors=authors
+        summary_path=summary_path, 
+        source=url, 
+        title=title, 
+        authors=authors, 
+        total_tokens_used=total_tokens_used, 
+        total_cost=total_cost,
     )
     print("End of job for source: youtube")
 
@@ -98,11 +110,16 @@ def process_website(url=None, title=None, authors=None):
 
     print(f"Downloading website {url}...")
     file_path, text = download_website(url, title)
-    summary_path = call_openai(
+    summary_path, total_tokens_used, total_cost = call_openai(
         text_path=file_path, source=url, title=title, authors=authors
     )
     create_logseq_note(
-        summary_path=summary_path, source=url, title=title, authors=authors
+        summary_path=summary_path, 
+        source=url, 
+        title=title, 
+        authors=authors, 
+        total_tokens_used=total_tokens_used, 
+        total_cost=total_cost,
     )
     print("End of job for source: website")
 

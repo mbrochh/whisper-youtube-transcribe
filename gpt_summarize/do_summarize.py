@@ -1,29 +1,49 @@
 import os
-import sys
-import time
 
 import openai
 import spacy
 import tiktoken
 
 from .local_settings import OPENAI_API_KEY
-from .utils import get_filename
 
 PROMPT = """
-Create a bullet point summary of the following text. 
+Create a bullet point summary of the text that will follow after the heading `TEXT:`. 
+
 Do not just list the general topic, but the actual facts that were shared.
+
+For example, if a speaker claims that "a dosage of X increases Y", do not
+just write "the speaker disusses the effects of X", instead write "a dosage 
+of X increases Y".
+
 Use '- ' for bullet points:
+
+After you have made all bullet points, add one last bullet point that 
+summarizes the main message of the content, like so:
+
+- Main message: [MAIN MESSAGE HERE]
+
+---
+
+TEXT TITLE: {title}
 
 TEXT:
 {chunk}
 """
 
-MODEL = "gpt-3.5-turbo-16k"
+# MODEL = "gpt-3.5-turbo-16k"
+# ENCODING = "cl100k_base"
+# MODEL_MAX_TOKENS = 16384
+# COST_PER_1K_INPUT_TOKENS_USD = 0.003
+# COST_PER_1K_OUTPUT_TOKENS_USD = 0.004
+# RESPONSE_TOKENS = 4000
+
+MODEL = "gpt-4-1106-preview"
 ENCODING = "cl100k_base"
-MODEL_MAX_TOKENS = 16384
-COST_PER_1K_INPUT_TOKENS_USD = 0.003
-COST_PER_1K_OUTPUT_TOKENS_USD = 0.004
+MODEL_MAX_TOKENS = 128000
+COST_PER_1K_INPUT_TOKENS_USD = 0.01
+COST_PER_1K_OUTPUT_TOKENS_USD = 0.03
 RESPONSE_TOKENS = 4000
+
 
 
 def count_tokens(text):
@@ -34,13 +54,13 @@ def count_tokens(text):
     return token_count
 
 
-def split_text(text_path):
+def split_text(text_path=None, title=None):
     """
     Split text into chunks of no more than max_tokens, using spaCy, so that
     full sentences are never broken up.
 
     """
-    prompt_tokens = count_tokens(PROMPT.format(chunk=""))
+    prompt_tokens = count_tokens(PROMPT.format(chunk="", title=title))
     max_tokens = MODEL_MAX_TOKENS - prompt_tokens - RESPONSE_TOKENS
 
     nlp = spacy.load("en_core_web_sm")
@@ -77,25 +97,15 @@ def split_text(text_path):
     return chunks, total_token_count
 
 
-def summarize(chunk):
+def summarize(chunk=None, title=None):
     """
     Calls OpenAI API to summarize a chunk of text.
 
     """
-    openai.api_key = OPENAI_API_KEY
-    prompt = PROMPT.format(chunk=chunk)
-    prompt_tokens = count_tokens(prompt)
+    client = openai.Client(api_key=OPENAI_API_KEY)
+    prompt = PROMPT.format(chunk=chunk, title=title)
     print("Sending prompt to OpenAI API...")
-    result = openai.ChatCompletion.create(
-        model=MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        max_tokens=MODEL_MAX_TOKENS - prompt_tokens - 10,
-        temperature=0,
-        n=1,
-        stream=False,
-    )
-    # print("Received response from OpenAI API, sleeping 1 minute.")
-    # time.sleep(65)
+    result = client.chat.completions.create( model=MODEL, messages=[{"role": "user", "content": prompt}], max_tokens=RESPONSE_TOKENS, temperature=0, n=1, stream=False,)
     return result
 
 
@@ -130,10 +140,10 @@ def save_summaries(summaries, filename_only, output_dir="files/summaries"):
     summary_path = os.path.join(output_dir, f"{filename_only}.txt")
     with open(summary_path, "w") as f:
         for summary in summaries:
-            f.write(summary["choices"][0]["message"]["content"])
+            f.write(summary.choices[0].message.content)
             f.write("\n\n")
-            total_input_tokens_used += summary["usage"]["prompt_tokens"]
-            total_output_tokens_used += summary["usage"]["completion_tokens"]
+            total_input_tokens_used += summary.usage.prompt_tokens
+            total_output_tokens_used += summary.usage.completion_tokens
     total_input_cost = (
         total_input_tokens_used * COST_PER_1K_INPUT_TOKENS_USD / 1000
     )
@@ -143,32 +153,3 @@ def save_summaries(summaries, filename_only, output_dir="files/summaries"):
     total_tokens_used = total_input_tokens_used + total_output_tokens_used
     total_cost = total_input_cost + total_output_cost
     return summary_path, total_tokens_used, total_cost
-
-
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        text_path = sys.argv[1]
-        chunks, total_token_count = split_text(text_path)
-        print(
-            f"Found {len(chunks)} chunks,"
-            f" totalling ~{total_token_count} tokens."
-        )
-
-        summaries = summarize_in_parallel(chunks)
-
-        filename_only = get_filename(text_path)
-        summary_path, total_tokens_used, total_cost = save_summaries(
-            summaries, filename_only
-        )
-
-        print(
-            f"Created {len(summaries)} summaries,"
-            f" totalling {total_tokens_used} tokens,"
-            f" at a cost of ${total_cost:.2f} USD."
-            f" Saved to {summary_path}."
-        )
-    else:
-        print(
-            "Usage: python -m gpt_summarize.chatgpt_summarize.py"
-            " <transcript_path>"
-        )
