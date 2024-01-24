@@ -7,6 +7,12 @@ You can find the slides [here](https://mbrochh.github.io/whisper-youtube-transcr
 
 You can find a video of the talk [here](https://www.youtube.com/watch?v=t5eVAtavoQ8)
 
+This is part two of a three part series
+
+1. [Introduction to ChatGPT, Copilot & Whisper](https://mbrochh.github.io/whisper-youtube-transcribe/1)
+2. [Summarising books with ChatGPT, Python and Logseq](https://mbrochh.github.io/kindle-scrape-summarise/1)
+3. [Talk to your notes with Logseq and ChatGPT](https://mbrochh.github.io/logseq-faiss-chatgpt/1)
+
 ## Usage with Docker
 
 I don't recommend using this with Docker because it is much slower than using
