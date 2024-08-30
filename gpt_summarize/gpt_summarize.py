@@ -39,6 +39,7 @@ def create_logseq_note(
         f.write(f"authors:: {authors}\n")
         f.write(f"gpt_token_count:: {total_tokens_used}\n")
         f.write(f"summary_cost:: {total_cost}\n")
+        f.write("second-brain:: true\n")
         f.write(f"- summarized [[{title}]]")
         f.write("\n- [[summary]]\n")
         f.writelines(formatted_lines)
